@@ -26,7 +26,7 @@ class Chef
   class Knife
     class Bootstrap < Knife
       include DataBagSecretOptions
-      # include LicenseAcceptance::CLIFlags::MixlibCLI
+      include LicenseAcceptance::CLIFlags::MixlibCLI
 
       SUPPORTED_CONNECTION_PROTOCOLS = %w{ssh winrm}.freeze
       WINRM_AUTH_PROTOCOL_LIST = %w{plaintext kerberos ssl negotiate}.freeze
@@ -406,6 +406,7 @@ class Chef
 
       def initialize(argv = [])
         super
+        LicenseAcceptance::Acceptor.check_and_persist!("chef-infra", Chef::VERSION.to_s, logger: Chef::Log)
         @client_builder = Chef::Knife::Bootstrap::ClientBuilder.new(
           chef_config: Chef::Config,
           knife_config: config,
@@ -535,8 +536,6 @@ class Chef
               unless Chef::Config[:silence_deprecation_warnings] == true
                 ui.warn options[old_key][:description]
               end
-        # LicenseAcceptance::Acceptor.check_and_persist!("chef-client", Chef::VERSION.to_s, logger: Chef::Log)
-
             end
           end
         end
