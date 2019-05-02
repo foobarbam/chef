@@ -406,7 +406,7 @@ class Chef
 
       def initialize(argv = [])
         super
-        LicenseAcceptance::Acceptor.check_and_persist!("chef-infra", Chef::VERSION.to_s, logger: Chef::Log)
+        LicenseAcceptance::Acceptor.check_and_persist!("chef-infra", Chef::VERSION.to_s, logger: Chef::Log, provided: Chef::Config[:chef_license])
         @client_builder = Chef::Knife::Bootstrap::ClientBuilder.new(
           chef_config: Chef::Config,
           knife_config: config,
