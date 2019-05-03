@@ -512,35 +512,6 @@ class Chef
         Erubis::Eruby.new(template).evaluate(bootstrap_context)
       end
 
-      # Check deprecated flags are used; map them to their new keys,
-      # and print a warning. Will not map a value to a new key if the
-      # CLI flag for that new key has also been specified.
-      # If both old and new flags are specified, this will warn
-      # and take the new flag value.
-      # This can be moved up to the base knife class if it's agreeable.
-      def warn_and_map_deprecated_flags
-        DEPRECATED_FLAGS.each do |old_key, new_flag_config|
-          new_key, = new_flag_config
-          if config.key?(old_key) && config_source(old_key) == :cli
-            # TODO - do we want the same warnings for knife config keys
-            #        in absence of CLI keys?
-            if config.key?(new_key) && config_source(new_key) == :cli
-              new_key_name = "--#{new_key.to_s.tr("_", "-")}"
-              old_key_name = "--#{old_key.to_s.tr("_", "-")}"
-              ui.warn <<~EOM
-                You provided both #{new_key_name} and #{old_key_name}.
-                Using: '#{new_key_name.split(" ").first} #{config[new_key]}' because #{old_key_name} is deprecated.
-              EOM
-            else
-              config[new_key] = config[old_key]
-              unless Chef::Config[:silence_deprecation_warnings] == true
-                ui.warn options[old_key][:description]
-              end
-            end
-          end
-        end
-      end
-
       def run
         verify_deprecated_flags!
 
